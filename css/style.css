@@ -15,4 +15,7 @@ td {
     width: 5rem;
     border: solid 3px yellow;
     background-color: rgb(70, 114, 152);
+    border-radius: 5px;
+    text-align: center;
+    vertical-align: middle;
 }
