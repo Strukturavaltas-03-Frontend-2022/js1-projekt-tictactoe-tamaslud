@@ -1,6 +1,6 @@
 "use strict";
 let cells = document.querySelectorAll(".cell");
-
+let gameEnded = false;
 const marksDefault = "-xoxoxoxox";
 let marks = marksDefault.split("");
 let boardArray = Array(9);
@@ -16,29 +16,34 @@ const clusters = [
 ];
 
 function initBoard() {
-  console.log("board initialization");
+  gameEnded = false;
   marks = marksDefault.split("");
   document.querySelector(".nextPlayer").innerHTML = `${marks.slice(-1)} player's turn`;
-
   boardArray = Array(9);
+
   for (let i = 0; i < cells.length; i += 1) {
     cells[i].innerHTML = "";
-  }
+  };
+
+  activateBoard();
+  
 }
 
-
-for (let i = 0; i < cells.length; i += 1) {
-  cells[i].addEventListener("click", function () {
-    if (cells[i].innerHTML.length < 1) {
-      let nextMark = marks.pop();
-      cells[i].innerHTML = nextMark;
-      boardArray[i] = nextMark;
-      document.querySelector(".nextPlayer").innerHTML = `${marks.slice(-1)} player's turn`;
-      console.log(checkWinner())
+function activateBoard(){
+  for (let i = 0; i < cells.length; i += 1) {
+    cells[i].addEventListener("click", function () {
+      if (cells[i].innerHTML.length < 1 && !gameEnded) {
+        let nextMark = marks.pop();
+        cells[i].innerHTML = nextMark;
+        boardArray[i] = nextMark;
+        document.querySelector(".nextPlayer").innerHTML = `${marks.slice(-1)} player's turn`;
+        checkWinner()
+      }
     }
+    );
   }
-  );
 }
+
 
 document.querySelector(".newgameBtn").addEventListener("click", function () {
   initBoard();
@@ -47,28 +52,31 @@ document.querySelector(".newgameBtn").addEventListener("click", function () {
 
 function checkWinner() {
   let result = "";
-  console.log("checking win situation");
+  if (marks.length == 1) {
+    result = "Drawn game!";
+    document.querySelector(".nextPlayer").innerHTML = `${result}`;
+  }
   for (const cluster of clusters) {
     let triplet = [];
     for (const i of cluster) {
       triplet.push(boardArray[i]);
     }
+    
     if (triplet.every((i) => i === "o")) {
       result = "Player 'o' won the game!";
       document.querySelector(".nextPlayer").innerHTML = `${result}`;
-     
+      gameEnded = true;
+      
     }
     if (triplet.every((i) => i === "x")) {
       result = "Player 'x' won the game!";
       document.querySelector(".nextPlayer").innerHTML = `${result}`;
+      gameEnded = true;
     }
-    if (marks.length == 1) {
-      result = "Drawn game!";
-      document.querySelector(".nextPlayer").innerHTML = `${result}`;
-    }
-    
-
+   
   }
 
   return result;
 }
+
+initBoard();
